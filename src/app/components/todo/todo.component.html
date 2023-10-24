@@ -1,6 +1,6 @@
 <div style="position: fixed; top: 50px; right: 70px; max-width: 400px; background-color: #fff; padding: 30px; box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);">
   <div style="font-size: 20px; margin-bottom: 10px;">
-      Welcome!
+      Welcome, {{username}}
   </div>
   <button (click)="logout()" style="padding: 10px 20px; background-color: red; color: white; border: none; cursor: pointer; font-size: 16px;">
       Logout
@@ -17,6 +17,8 @@
             To Do APP
           </h1>
         </div>
+
+        <div class="welcome-message" *ngIf="welcomeMessage">{{ welcomeMessage }}</div>
 
         <div class="card-body p-4">
           <ul class="list-group">

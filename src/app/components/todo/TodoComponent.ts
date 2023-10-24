@@ -11,24 +11,49 @@ import { AuthService } from 'src/app/shared/auth.service';
 export class TodoComponent implements OnInit {
   todos: any[] = [];
   finishedList: any[] = [];
+  userID: string | null = null // a string or null if no user
+  welcomeMessage: string = '';
+  username: string | null = null;
+
 
   constructor(private todoService: TodoService, private authService: AuthService) { }
 
-  //ngOnit fetches data from firestorecollection(from the document in firebase), then updates using valuechanges() with each unique ID;
-  //suncribe is listening to the chnages and updating the 2 properties todo & finished list
+  //ngOnit fetches  userId from authService, listens if the user ID is signed in then assign it to userID. then updates using valuechanges() with each unique ID;
+  //suncribe is listening to the chnages and updating the 2 properties todo & finished list, making sure the task is done andthe userID matches.
   ngOnInit(): void {
-    this.todoService.firestoreCollection.valueChanges({ idField: 'id' })
-      .subscribe(item => {
-        this.todos = item.filter((todo: any) => !todo.isDone);
-        this.finishedList = item.filter((todo: any) => todo.isDone);
-      });
+    // Fetch user-specific data using the AuthService
+    this.authService.getUID().subscribe((uid) => {
+      if (uid) {
+        this.userID = uid;
+
+        // this.authService.getUsername(uid).subscribe((username) => {
+        //   if (username) {
+        //     this.welcomeMessage = `Welcome, ${username}!`;
+        //     console.log("welcome message", this.welcomeMessage)
+        //   }
+        // });
+        this.authService.getUsername(uid).subscribe((username) => {
+          this.username = username;
+          console.log("welcome message", username)
+        });
+
+        this.todoService.firestoreCollection.valueChanges({ idField: 'id' })
+          .subscribe(item => {
+            this.todos = item.filter((todo: any) => !todo.isDone && todo.uid === this.userID);
+            this.finishedList = item.filter((todo: any) => todo.isDone && todo.uid === this.userID);
+          });
+      }
+      console.log('User UID:', uid);
+    })
+
   }
 
-  // it takes the input of the user, if the input field/ title input value is not empty then it calls the addTodo(from todoServices) containing the text
+  // it takes the input of the user, if the input field/ title input value is not empty  and that a user is logged in (this.userID is not null)
+  // then it calls the addTodo(from todoServices) containing the text
   // to add it to the list of todo then empty the input field
   onClick(titleInput: HTMLInputElement) {
-    if (titleInput.value) {
-      this.todoService.addTodo(titleInput.value);
+    if (titleInput.value && this.userID) {
+      this.todoService.addTodo(titleInput.value, this.userID);
       titleInput.value = "";
     }
   }

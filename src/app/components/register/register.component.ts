@@ -7,6 +7,7 @@ import { Router } from '@angular/router'; // Make sure to import Router
   styleUrls: ['./register.component.css']
 })
 export class RegisterComponent implements OnInit {
+  username: string = '';
   email: string = '';
   password: string = '';
 
@@ -18,7 +19,10 @@ export class RegisterComponent implements OnInit {
   register(event: Event) {
     //event.prevent default is telling the browser not to perform it default action associated with form submission etc
     event.preventDefault();
-
+    if (this.username == '') {
+      alert('Please enter username');
+      return;
+    }
     if (this.email == '') {
       alert('Please enter email');
       return;
@@ -33,6 +37,7 @@ export class RegisterComponent implements OnInit {
     }).catch(error => {
       alert('registration Not Succesful')
     });
+    this.username =''
     this.email = '';
     this.password = '';
   }

@@ -1,21 +1,22 @@
 import { Injectable } from '@angular/core';
 import { AngularFireAuth } from '@angular/fire/compat/auth'
-import { AngularFirestoreModule } from '@angular/fire/compat/firestore'
+import { AngularFirestore, AngularFirestoreModule } from '@angular/fire/compat/firestore'
 import { Router } from '@angular/router';
+import { Observable, map, of } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthService {
   //used to inject dependencies into the service
-  constructor(private fireauth: AngularFireAuth, private router: Router) { }
+  constructor(private fireauth: AngularFireAuth, private router: Router,   private firestore: AngularFirestore) { }
 
-  //login method
-  //it uses the sign in method provided by firebase auth. then if the sign in is suucesful it stores a token in the localstorage
-  //which will be to indicate a user is signin, afterwards takes us to the todo page
+  //it uses the sign in method provided by firebase auth. If the login is successful, it extracts the user's unique ID (UID)
+  //it stores a token in the localstorage which will be to indicate a user is signin, afterwards takes us to the todo page
   login(email: string, password: string) {
-    this.fireauth.signInWithEmailAndPassword(email, password).then(() => {
-      // console.log(x)
+    this.fireauth.signInWithEmailAndPassword(email, password).then((userCredential) => {
+      const uid = userCredential.user?.uid;
+      console.log('userID, auth', uid )
       localStorage.setItem('token', 'true');
       this.router.navigate(['/todo']);
     }, err => {
@@ -49,4 +50,34 @@ export class AuthService {
       alert(err.message);
     })
   }
+
+  //observables listens if the user is logged in or null returning UID if yes, authstate from firebase auth. to listen to changes in the
+  //user's auth. state. map transforms the user ID (if logged in) in the authstate. pipe is narrowing it together
+  getUID(): Observable<string | null> {
+    return this.fireauth.authState.pipe(
+      map((user) => user ? user.uid : null)
+    );
+  }
+
+  getUsername(uid: string): Observable<string | null> {
+    return this.firestore
+      .collection('users')
+      .doc(uid)
+      .get()
+      .pipe(
+        map((doc) => {
+          if (doc.exists) {
+            return doc.get('username');
+          } else {
+            console.log('Document does not exist');
+            return null;
+          }
+        })
+        // catchError((error) => {
+        //   console.error('Error fetching username:', error);
+        //   return of(null);
+        // })
+      );
+  }
+
 }

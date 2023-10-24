@@ -23,3 +23,7 @@ export interface DocumentChange<T> extends firebase.firestore.DocumentChange {
 
 so i updated it to -
 export interface DocumentChange<T> extends firebase.firestore.DocumentChange<T>
+
+
+1. want each user to have it's todo.
+2. use  a UID to access the user, thereby adding each task to the userID
