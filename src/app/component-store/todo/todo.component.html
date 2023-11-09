@@ -32,9 +32,9 @@
               </div>
             </li>
 
-            <li class="list-group-item mb-2 border py-3 rounded-3" *ngFor="let item of todos">
+            <li class="list-group-item mb-2 border py-3 rounded-3" *ngFor="let item of todos$ | async">
               <span [class.completed-task]="item.isDone">
-                <i class="text-sucess" (click)="onStatusChange(item.id, !item.isDone)"
+                <i class="text-sucess" (click)="onStatusChange(item.id!, !item.isDone)"
                   [ngClass]="item.isDone?'fa-solid fa-circle-check':'fa-regular fa-circle'"></i>
                 {{item.title}}
                 <span class="float-end text-secondary " (click)="onDelete(item.id)"
@@ -46,9 +46,9 @@
           </ul>
           <h2 class="mt-4">Completed Tasks</h2>
           <ul class="list-group">
-            <li class="list-group-item mb-2 border py-3 rounded-3" *ngFor="let item of finishedList">
+            <li class="list-group-item mb-2 border py-3 rounded-3" *ngFor="let item of finishedList$ | async">
               <span [class.completed-task]="item.isDone">
-                <i class="text-success" (click)="onStatusChange(item.id, !item.isDone)"
+                <i class="text-success" (click)="onStatusChange(item.id!, !item.isDone)"
                   [ngClass]="item.isDone ? 'fa-solid fa-circle-check' : 'fa-regular fa-circle'"></i>
                 {{item.title}}
                 <span class="float-end text-secondary" (click)="onDelete(item.id)" [class.completed-task]="item.isDone">

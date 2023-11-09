@@ -21,3 +21,16 @@ solution- export interface DocumentChange<T> extends firebase.firestore.Document
     readonly doc: QueryDocumentSnapshot<T>;
 }
 NOTE- ADD <T> after the end of documentchnage
+
+
+
+----
+1. component reading and writing into the ngrx component store
+  1. reading the todo items
+  2. writing added tasks (update)
+  CRUD - COMPONENT performing crud operation3 on the storE
+  - anytime the task is added it should be able to update firebase
+2. create save button
+3. then component store updates firebase with the save button
+
+
