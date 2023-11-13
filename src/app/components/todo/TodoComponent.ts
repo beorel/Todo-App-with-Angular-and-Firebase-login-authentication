@@ -1,9 +1,9 @@
 import { Component, OnInit } from '@angular/core';
-import { TodoService } from '../todo.service';
+import { TodoService } from './component-store/todo.service';
 import { AuthService } from 'src/app/shared/auth.service';
-import { TodoStore } from 'src/app/component-store/todo.store';
+import { TodoStore } from 'src/app/components/todo/component-store/todo.store';
 import { switchMap } from 'rxjs';
-import { Todo } from '../todo.models';
+import { Todo } from './component-store/todo.models';
 
 
 @Component({
@@ -71,13 +71,14 @@ export class TodoComponent implements OnInit {
   //it checks if the user changes the status to done or not done by using boolena true or false, it calls update-todo-status from todoservice
   //to update the task using the id and boolean true/false
   onStatusChange(id: string, newStatus: boolean) {
-    this.todoStore.updateTodoStatusEffect({id, isDone: newStatus});
+    this.todoStore.updateTodoStatus({id, isDone: newStatus});
   }
 
   //calls the delete tod from the todoservice to delete
   onDelete(id: string) {
-    this.todoService.deleteTodo(id);
+    this.todoStore.deleteTodoEffect(id);
   }
+
 
   // Call the logout method from AuthService
   logout() {

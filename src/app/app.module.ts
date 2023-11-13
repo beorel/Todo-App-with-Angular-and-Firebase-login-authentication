@@ -6,7 +6,7 @@ import {AngularFirestoreModule} from '@angular/fire/compat/firestore'
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { environment } from 'src/environments/environment';
-import { TodoComponent } from './component-store/todo/TodoComponent';
+import { TodoComponent } from './components/todo/TodoComponent';
 import { LoginComponent } from './components/login/login.component';
 import { RegisterComponent } from './components/register/register.component';
 import { FormsModule } from '@angular/forms';

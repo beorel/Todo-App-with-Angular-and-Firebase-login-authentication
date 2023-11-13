@@ -37,7 +37,7 @@
                 <i class="text-sucess" (click)="onStatusChange(item.id!, !item.isDone)"
                   [ngClass]="item.isDone?'fa-solid fa-circle-check':'fa-regular fa-circle'"></i>
                 {{item.title}}
-                <span class="float-end text-secondary " (click)="onDelete(item.id)"
+                <span class="float-end text-secondary " (click)="onDelete(item.id!)"
                   [class.completed-task]="item.isDone">
                   <i class="fa-solid fa-trash-can"></i>
                 </span>
@@ -51,7 +51,7 @@
                 <i class="text-success" (click)="onStatusChange(item.id!, !item.isDone)"
                   [ngClass]="item.isDone ? 'fa-solid fa-circle-check' : 'fa-regular fa-circle'"></i>
                 {{item.title}}
-                <span class="float-end text-secondary" (click)="onDelete(item.id)" [class.completed-task]="item.isDone">
+                <span class="float-end text-secondary" (click)="onDelete(item.id!)" [class.completed-task]="item.isDone">
                   <i class="fa-solid fa-trash-can"></i>
                 </span>
               </span>

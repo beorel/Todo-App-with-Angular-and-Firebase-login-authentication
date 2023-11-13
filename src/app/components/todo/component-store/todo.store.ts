@@ -34,25 +34,31 @@ export class TodoStore extends ComponentStore<TodoState>{
     ...state,
     todo,
   }))
+
   readonly setFinishedList = this.updater((state, finishedList: Todo[]) => ({
     ...state,
     finishedList,
   }));
+
   readonly addTodo = this.updater((state, newTodo: Todo) => ({
     ...state,
     todo: [...state.todo, newTodo],
   }))
 
   readonly updateTodoStatus = this.updater((state, update: { id: string; isDone: boolean }) => ({
-
-      ...state,
-      todo: state.todo.map(todo =>
-        todo.id === update.id ? { ...todo, isDone: update.isDone } : todo),
-      finishedList: state.finishedList.map(todo =>
-        todo.id === update.id ? { ...todo, isDone: update.isDone } : todo),
-
-    
+    ...state,
+    todo: state.todo.map(todo =>
+      todo.id === update.id ? { ...todo, isDone: update.isDone } : todo),
+    finishedList: state.finishedList.map(todo =>
+      todo.id === update.id ? { ...todo, isDone: update.isDone } : todo),
   }))
+
+  readonly removeTodo = this.updater((state, id: string) => ({
+    ...state,
+    todo: state.todo.filter(todo => todo.id !== id),
+    finishedList: state.finishedList.filter(todo => todo.id !== id),
+  }));
+
 
   //effects
   readonly loadTodoEffect = this.effect<string>((uid$) => {
@@ -84,9 +90,9 @@ export class TodoStore extends ComponentStore<TodoState>{
     )
   })
 
-  readonly updateTodoStatusEffect = this.effect<{id: string; isDone: boolean}>(update$ => {
+  readonly updateTodoStatusEffect = this.effect<{ id: string; isDone: boolean }>(update$ => {
     return update$.pipe(
-      switchMap(update => this.todoService.updateTodoStatus(update.id , update.isDone)
+      switchMap(update => this.todoService.updateTodoStatus(update.id, update.isDone)
         .pipe(
           tap(() => this.updateTodoStatus(update)),
           catchError(() => {
@@ -95,13 +101,24 @@ export class TodoStore extends ComponentStore<TodoState>{
         ))
     )
   })
+  readonly deleteTodoEffect = this.effect<string>(todoId$ => {
+    return todoId$.pipe(
+      switchMap(id => this.todoService.deleteTodo(id).pipe(
+        tap(() => this.removeTodo(id)), // Update the state to remove the todo
+        catchError(error => {
+          // Handle the error case
+          console.error('Error deleting todo:', error);
+          return EMPTY; // Use EMPTY to complete the observable sequence
+        })
+      ))
+    );
+  });
 
 
 
-
-  // Call this method to trigger the loadTodosEffect effect
-  loadTodos(uid: string) {
-    // This should trigger the effect and not return anything
-    this.loadTodoEffect(uid);
-  }
+// Call this method to trigger the loadTodosEffect effect
+loadTodos(uid: string) {
+  // This should trigger the effect and not return anything
+  this.loadTodoEffect(uid);
+}
 }
